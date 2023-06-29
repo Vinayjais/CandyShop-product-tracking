@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <style>
+   
+    .container .abc input{
+        width: 300px;
+    }
+    .container form .btn{
+        width: 600px;
+    }
+    .container form {
+        background-color: rgb(173, 255, 255);
+        padding: 25px;
+    }
+    @media (width:500px){
+        .container .abc input{
+        width: 150px;
+    }
+    .container form .btn{
+        width: 300px;
+    }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body style="background-color: rgb(255, 177, 208); ">
+         <div class="container d-flex justify-content-center ">
+          <center> <div>
+            <br>
+             <h2 style="color: rgb(137, 137, 0);">Candy Shop</h2>
+         
+                    </div></center>
+        </div>
+      <div class="container d-flex justify-content-center">
+        <form action="#" onsubmit="addItem()" >
+                  <label for="name">Candy-Name:</label>
+                  
+                  <input type="text" name="" class="form-control form-control-sm " id="candyName">
+                  
+                  <label for="text">Description:</label>
+                  
+                  <input type="text" name=""class="form-control form-control-sm" id="description">
+                  
+                  <label for="price">Price:</label>
+                  
+                  <input type="number" name="" class="form-control form-control-sm" id="price" placeholder="Rs ">
+                  
+                  <label for="quantity">Quantity</label>
+                  <input type="number" name="" class="form-control form-control-sm" id="quantity">
+                
+                 
+                
+                 <br><br>
+             <input type="submit" class="btn btn-primary btn-lg" value="Add Items">
+        </form>
+         
+        
+
+      </div>
+
+      <div class="container">
+        <ul id="items">
+        
+        </ul>
+    </div>
+         
+      <script>
+                     //********fetching data****************
+                     window.addEventListener('DOMContentLoaded', () => {
+                             fetchData();
+                     });
+
+                     //***************
+                       function fetchData(){
+                        axios.get('https://crudcrud.com/api/6e6f033598894b84b635aacd448291a3/adlist')
+                        .then(responce => {
+                            console.log( 'data Loaded');
+                            console.log(responce);
+                            const items = responce.data;
+                            for(let i=0; i< items.length; i++){
+                                addToStockList(items[i]);
+                            }
+
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                       }
+              //********************************************* 
+             function addToStockList(shopItems){
+                const {CandyName, Description,Price,Quantity} =shopItems;
+               
+                  const ulEle = document.getElementById('items');
+                  const li = document.createElement('li');
+
+                  li.appendChild(document.createTextNode(CandyName));
+                  li.appendChild(document.createTextNode(" "));
+                   li.appendChild(document.createTextNode(Description));
+                   li.appendChild(document.createTextNode(" "));
+                  li.appendChild(document.createTextNode(Price));
+                  li.appendChild(document.createTextNode(" "));
+                  li.appendChild(document.createTextNode(Quantity));
+                  li.appendChild(document.createTextNode(" "));
+            //*********************btn *****************
+                  const btn1 = document.createElement('button');
+                  btn1.className =" btn btn-primary";
+                  btn1.appendChild(document.createTextNode('Buy 1'));
+                  li.appendChild(btn1);
+                  li.appendChild(document.createTextNode(" "));
+                //********************btn 2**************
+                const btn2 = document.createElement('button');
+                  btn2.className =" btn btn-primary";
+                  btn2.appendChild(document.createTextNode('Buy 2'));
+                  li.appendChild(btn2);
+                  li.appendChild(document.createTextNode(" "));
+                  //*****************btn 3******************
+                  const btn3 = document.createElement('button');
+                  btn3.className =" btn btn-primary";
+                  btn3.appendChild(document.createTextNode('Buy 3'));
+                  li.appendChild(btn3);
+
+                  //********
+                  ulEle.appendChild(li);
+                   
+                  btn1.addEventListener('click',buyOne);
+                  btn2.addEventListener('click',buyTwo);
+                  btn3.addEventListener('click',buyThree);
+                
+
+
+                  function buyOne() {
+                      let item_id = shopItems._id;
+                      let lessByOne = shopItems.Quantity - 1;
+  
+                 axios
+                         .put(`https://crudcrud.com/api/6e6f033598894b84b635aacd448291a3/adlist`+`/${item_id}`, {
+                              
+                              CandyName :CandyName,
+                             Description: Description,
+                              Price : Price,
+                              Quantity: lessByOne,
+
+                          })
+                          .then(response => {
+                                console.log('Quantity updated');
+                                       console.log(response);
+                                         function autoRefresh(){
+                                          setTimeout(() => {
+                                            location.reload();
+                                          }, 1000);
+                                         }
+                                           autoRefresh();
+                                       })
+                                                    .catch(error => {
+                                      console.log(error);
+                                });
+                       }
+                 
+                  function buyTwo() {
+                      let item_id = shopItems._id;
+                      let lessByOne = shopItems.Quantity - 2;
+  
+                         axios
+                         .put(`https://crudcrud.com/api/6e6f033598894b84b635aacd448291a3/adlist`+`/${item_id}`, {
+                              
+                              CandyName :CandyName,
+                             Description: Description,
+                              Price : Price,
+                              Quantity: lessByOne,
+
+                          })
+                          .then(response => {
+                                console.log('Quantity updated');
+                                       console.log(response);
+                                         function autoRefresh(){
+                                          setTimeout(() => {
+                                            location.reload();
+                                          }, 1000);
+                                         }
+                                           autoRefresh();
+                                       })
+                                                    .catch(error => {
+                                      console.log(error);
+                                });
+                       }
+
+                  function buyThree() {
+                      let item_id = shopItems._id;
+                      let lessByOne = shopItems.Quantity - 3;
+  
+                 axios
+                         .put(`https://crudcrud.com/api/6e6f033598894b84b635aacd448291a3/adlist`+`/${item_id}`, {
+                              
+                              CandyName :CandyName,
+                             Description: Description,
+                              Price : Price,
+                              Quantity: lessByOne,
+
+                          })
+                          .then(response => {
+                                console.log('Quantity updated');
+                                       console.log(response);
+                                         function autoRefresh(){
+                                          setTimeout(() => {
+                                            location.reload();
+                                          }, 1000);
+                                         }
+                                           autoRefresh();
+                                       })
+                                                    .catch(error => {
+                                      console.log(error);
+                                });
+                       }
+
+
+
+             }
+
+            
+      //*********************************************************
+          
+           function addItem(event){
+              event.preventDefault();
+              const candyName =document.getElementById('candyName').value;
+              const description = document.getElementById('description').value;
+              const price = document.getElementById('price').value;
+              const quantity = document.getElementById('quantity').value;
+
+              const shopItems = {
+                    CandyName : candyName,
+                    Description : description,
+                    Price : price,
+                    Quantity: quantity
+              };
+
+              axios.post('https://crudcrud.com/api/6e6f033598894b84b635aacd448291a3/adlist',shopItems)
+              .then(responce => {
+                    console.log(responce)
+                    addToStockList(shopItems);
+              })
+              .catch( error => {
+                  document.body.innerHTML += '<h4> Something Went Wrong </h4>';
+                  console.log(error);
+              });
+           }
+
+       document.querySelector('form').addEventListener('submit',addItem);
+
+      </script>
+   
+</body>
+</html>
